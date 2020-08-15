@@ -20,6 +20,8 @@ fullnode.geth.personal.unlockAccount(fullnode.eth.coinbase, PASSWORD, 0)
 fullnode.eth.defaultAccount = fullnode.eth.coinbase
 
 # SGBJ smart contract
+# to get web3js contract employing code: https://remix.ethereum.org/ (CAUSION: need to setting evm version as "byzantium")
+# put employ code to geth console & start mining => then we will get contract address
 CONTRACTADDR = Web3.toChecksumAddress("0xe66840E9821D06Ea7ca1aA8328DbA56883543f8A")
 # to get ABI of contract: https://remix.ethereum.org/
 # to remove endline of abi: https://www.textfixer.com/tools/remove-line-breaks.php
