@@ -5,16 +5,27 @@ contract SGBJ {
     address [] public users;
     mapping (address => uint256) public usersBalance;
     mapping (address => uint256) public usersWashCount;
+    
     uint256 public balanceSum;
     uint256 public washCountSum;
     uint256 public lottoEpoch;
     uint256 public interestRate;
+    uint256 public roundNumber;
+    
+    // last round's
+    address [] public depositWinners;
+    address [] public washCountWinners;
+    uint256 [] public winningsAmount;   // winning prize amount
     
     constructor() public {
-        lottoEpoch = 3;
+        lottoEpoch = 1;
         interestRate = 10; // 10%
         
         greeting = "hello";
+    }
+    
+    function setEpoch(uint256 newLottoEpoch) public {
+        lottoEpoch = newLottoEpoch;
     }
     
     function addDeposit(uint256 amount) public {
@@ -88,7 +99,8 @@ contract SGBJ {
         // calculate winning prize amount = sum of interest
         uint256 prizeAmount = balanceSum;
         for (uint256 i=0; i< lottoEpoch; i++){
-            prizeAmount *= (100+interestRate)/100;
+            prizeAmount *= (100 + interestRate);
+            prizeAmount /= 100;
         }
         prizeAmount -= balanceSum;
         
@@ -96,6 +108,14 @@ contract SGBJ {
         usersBalance[depositWinner] += prizeAmount/2;
         usersBalance[washCountWinner] += prizeAmount - prizeAmount/2;
         balanceSum += prizeAmount;
+        
+        // logging winners
+        depositWinners.push(depositWinner);
+        washCountWinners.push(washCountWinner);
+        winningsAmount.push(prizeAmount);
+        
+        // start next round
+        roundNumber += 1;
         
         // return winners' address
         return (depositWinner, washCountWinner);
