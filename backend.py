@@ -10,6 +10,8 @@ HOST = "0.0.0.0"
 PORT = 7223
 
 # Ethereum node address
+# Geth version: Geth/v1.9.0-unstable-3a92ba4c-20200706/linux-amd64/go1.10.4
+# web3 version: 5.12.0 (how to know -> $ pip3 freeze | grep web3)
 NODEIP = "http://localhost:"
 NODEPORT = "7224"
 fullnode = Web3(Web3.HTTPProvider(NODEIP + NODEPORT))
