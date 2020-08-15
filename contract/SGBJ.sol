@@ -1,4 +1,5 @@
 pragma solidity ^0.5.1;
+// EVM VERSION = byzantium
 
 contract SGBJ {
     address [] public users;
@@ -19,6 +20,14 @@ contract SGBJ {
     function addDeposit(uint256 amount) public {
         usersBalance[msg.sender] += amount;
         balanceSum += amount;
+        
+        // add user to the list
+        for (uint i=0; i<users.length; i++){
+            if (users[i] == msg.sender){
+                return;
+            }
+        }
+        users.push(msg.sender);
     }
     
     function withdrawDeposit(uint256 amount) public {
@@ -30,6 +39,14 @@ contract SGBJ {
     function addWashCount(uint256 amount) public {
         usersWashCount[msg.sender] += amount;
         washCountSum += amount;
+        
+        // add user to the list
+        for (uint i=0; i<users.length; i++){
+            if (users[i] == msg.sender){
+                return;
+            }
+        }
+        users.push(msg.sender);
     }
     
     function getRandomNumber(uint256 upperBound) pure internal returns (uint256) {
