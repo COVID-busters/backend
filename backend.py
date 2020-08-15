@@ -29,6 +29,9 @@ abiString = '[ { "inputs": [], "payable": false, "stateMutability": "nonpayable"
 CONTRACTABI = json.loads(abiString)
 sgbjContract = fullnode.eth.contract(address=CONTRACTADDR, abi=CONTRACTABI)
 
+# gas amount for transaction (should be large enough)
+GAS = 1000000
+
 # dictionaries
 usersBalance = dict()
 usersWashCount = dict()
@@ -68,45 +71,53 @@ def user():
     param = request.get_json()
     print(param)
     functionName = param['functionName']
-    userName = param['userName']
+
     if functionName == "getUserInfo":
-        response = {"balance" : usersBalance[userName], "washCount" : usersWashCount[userName]}
-        return jsonify(response)
+        userAddr = param['userAddr']
+        try:
+            balance = sgbjContract.functions.usersBalance(userAddr).call()
+            washCount = sgbjContract.functions.usersWashCount(userAddr).call()
+            response = {"balance" : balance, "washCount" : washCount, "result" : "success"}
+            return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+        
     elif functionName == "addDeposit":
         amount = param['amount']
         try:
-            tx_hash = sgbjContract.functions.addDeposit(amount).transact()
+            tx_hash = sgbjContract.functions.addDeposit(amount).transact({'gas':GAS})
             tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
-        except:
-            response = {"result" : "failed"}
+            response = {"result" : "success"}
             return jsonify(response)
-        usersBalance[userName] = usersBalance[userName] + amount
-        response = {"result" : "success"}
-        return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+            
     elif functionName == "subBalance":
         amount = param['amount']
         try:
-            tx_hash = sgbjContract.functions.withdrawDeposit(amount).transact()
+            tx_hash = sgbjContract.functions.withdrawDeposit(amount).transact({'gas':GAS})
             tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
-        except:
-            response = {"result" : "failed"}
+            response = {"result" : "success"}
             return jsonify(response)
-        usersBalance[userName] = usersBalance[userName] - amount
-        response = {"result" : "success"}
-        return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+            
     elif functionName == "addWashCount":
         amount = param['amount']
         try:
-            tx_hash = sgbjContract.functions.addWashCount(amount).transact()
+            tx_hash = sgbjContract.functions.addWashCount(amount).transact({'gas':GAS})
             tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
-        except:
-            response = {"result" : "failed"}
+            response = {"result" : "success"}
             return jsonify(response)
-        usersWashCount[userName] = usersWashCount[userName] + amount
-        response = {"result" : "success"}
-        return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+            
     else:
-        response = {"error" : "wrong function name"}
+        response = {"result" : "fail", "error" : "wrong function name"}
         return jsonify(response)
 
 @app.route('/blockchain', methods=['POST'])
@@ -117,9 +128,12 @@ def blockchain():
     if functionName == "getBlockNumber":
         response = {"blockNumber" : fullnode.eth.blockNumber}
         return jsonify(response)
-    elif functionName == "addBalance":
-        amount = param['amount']
-        usersBalance[userName] = usersBalance[userName] + amount
+    elif functionName == "startMining":
+        fullnode.geth.miner.start(1)
+        response = {"result" : "success"}
+        return jsonify(response)
+    elif functionName == "stopMining":
+        fullnode.geth.miner.stop()
         response = {"result" : "success"}
         return jsonify(response)
     else:
@@ -130,7 +144,7 @@ if __name__ == "__main__":
     
     # function call & wait for the tx to be mined (with enough gas)
     # https://web3py.readthedocs.io/en/latest/contracts.html#web3.contract.ContractFunction.call
-    tx_hash = sgbjContract.functions.addWashCount(10).transact({'gas':1000000})
+    tx_hash = sgbjContract.functions.addWashCount(10).transact({'gas':GAS})
     tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
     print (tx_receipt)
     
