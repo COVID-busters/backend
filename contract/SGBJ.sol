@@ -6,6 +6,7 @@ contract SGBJ {
     mapping (address => uint256) public usersBalance;
     mapping (address => uint256) public usersWashCount;
     
+    uint256 public userCount;
     uint256 public balanceSum;
     uint256 public washCountSum;
     uint256 public lottoEpoch;
@@ -18,7 +19,7 @@ contract SGBJ {
     uint256 [] public winningsAmount;   // winning prize amount
     
     constructor() public {
-        lottoEpoch = 1;
+        lottoEpoch = 3;
         interestRate = 10; // 10%
         
         greeting = "hello";
@@ -39,6 +40,7 @@ contract SGBJ {
             }
         }
         users.push(userAddr);
+        userCount++;
     }
     
     function withdrawDeposit(uint256 amount, address userAddr) public {
@@ -58,6 +60,7 @@ contract SGBJ {
             }
         }
         users.push(userAddr);
+        userCount++;
     }
     
     function getRandomNumber(uint256 upperBound) pure internal returns (uint256) {
@@ -65,7 +68,7 @@ contract SGBJ {
     }
     
     function selectWinner() public returns (address, address){
-        assert(block.number % lottoEpoch == 0);
+        // assert(block.number % lottoEpoch == 0);
         
         // select deposit winner
         uint256 luckyNumber = getRandomNumber(balanceSum);
