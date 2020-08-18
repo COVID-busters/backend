@@ -5,6 +5,7 @@ import sys
 # from web3.auto import w3 # https://github.com/ethereum/web3.py/blob/master/docs/web3.eth.account.rst#sign-a-contract-transaction
 import json
 import binascii, os
+import random
 
 # backend address
 HOST = "0.0.0.0"
@@ -26,10 +27,10 @@ fullnode.eth.defaultAccount = fullnode.eth.coinbase
 # remix settings: https://remix.ethereum.org/#optimize=false&evmVersion=byzantium&version=soljson-v0.5.17+commit.d19bba13.js
 # to get web3js contract employing code: https://remix.ethereum.org/ (CAUSION: need to setting evm version as "byzantium")
 # put employ code to geth console & start mining => then we will get contract address
-CONTRACTADDR = Web3.toChecksumAddress("0xF7bD182650780a37f61CdB4eff4BD2710B5fE6C8")
+CONTRACTADDR = Web3.toChecksumAddress("0xB201a0e33f7c0c672629be21bF027701A39D0F4B")
 # to get ABI of contract: https://remix.ethereum.org/
 # to remove endline of abi: https://www.textfixer.com/tools/remove-line-breaks.php
-abiString = '[ { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "address", "name": "userAddr", "type": "address" } ], "name": "addDeposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "address", "name": "userAddr", "type": "address" } ], "name": "addWashCount", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "balanceSum", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "depositWinners", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "greet", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "greeting", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "interestRate", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lottoEpoch", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "roundNumber", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "selectWinner", "outputs": [ { "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "newLottoEpoch", "type": "uint256" } ], "name": "setEpoch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "string", "name": "newGreeting", "type": "string" } ], "name": "setGreeting", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "users", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "usersBalance", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "usersWashCount", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "washCountSum", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "washCountWinners", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "winningsAmount", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "address", "name": "userAddr", "type": "address" } ], "name": "withdrawDeposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" } ]'
+abiString = '[ { "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "address", "name": "userAddr", "type": "address" } ], "name": "addDeposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "address", "name": "userAddr", "type": "address" } ], "name": "addWashCount", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "balanceSum", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "depositWinners", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "greet", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "greeting", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "interestRate", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lottoEpoch", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "roundNumber", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "selectWinner", "outputs": [ { "internalType": "address", "name": "", "type": "address" }, { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "newLottoEpoch", "type": "uint256" } ], "name": "setEpoch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "string", "name": "newGreeting", "type": "string" } ], "name": "setGreeting", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "userCount", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "users", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "usersBalance", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "address", "name": "", "type": "address" } ], "name": "usersWashCount", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "washCountSum", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "washCountWinners", "outputs": [ { "internalType": "address", "name": "", "type": "address" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "name": "winningsAmount", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [ { "internalType": "uint256", "name": "amount", "type": "uint256" }, { "internalType": "address", "name": "userAddr", "type": "address" } ], "name": "withdrawDeposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" } ]'
 CONTRACTABI = json.loads(abiString)
 sgbjContract = fullnode.eth.contract(address=CONTRACTADDR, abi=CONTRACTABI)
 
@@ -87,7 +88,25 @@ def user():
         except:
             response = {"result" : "fail"}
             return jsonify(response)
-        
+    
+    elif functionName == "getUserCount":
+        try:
+            userCount = sgbjContract.functions.userCount().call()
+            response = {"userCount": userCount, "result" : "success"}
+            return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+
+    elif functionName == "getLottoEpoch":
+        try:
+            lottoEpoch = sgbjContract.functions.lottoEpoch().call()
+            response = {"lottoEpoch": lottoEpoch, "result" : "success"}
+            return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+
     elif functionName == "addDeposit":
         amount = param['amount']
         userAddr = param['userAddr']
@@ -146,6 +165,27 @@ def user():
         try:
             tx_hash = sgbjContract.functions.selectWinner().transact({'gas':GAS})
             tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
+            
+            # temp code for demo: insert random user1, user2 at every round
+
+            # insert random user1
+            user1Addr = generateRandomAddress()
+            depositAmount = random.randint(1,300)
+            washCountAmount = random.randint(1,3)
+            tx_hash = sgbjContract.functions.addDeposit(depositAmount, user1Addr).transact({'gas':GAS})
+            tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
+            tx_hash = sgbjContract.functions.addWashCount(washCountAmount, user1Addr).transact({'gas':GAS})
+            tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
+
+            # insert random user2
+            user2Addr = generateRandomAddress()
+            depositAmount = random.randint(1,300)
+            washCountAmount = random.randint(1,3)
+            tx_hash = sgbjContract.functions.addDeposit(depositAmount, user2Addr).transact({'gas':GAS})
+            tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
+            tx_hash = sgbjContract.functions.addWashCount(washCountAmount, user2Addr).transact({'gas':GAS})
+            tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
+
             response = {"result" : "success"}
             return jsonify(response)
         except:
@@ -156,6 +196,29 @@ def user():
         try:
             roundNumber = sgbjContract.functions.roundNumber().call()
             response = {"roundNumber": roundNumber, "result" : "success"}
+            return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+
+    elif functionName == "getWinningProbability":
+        userAddr = param['userAddr']
+        try:
+            deposit = sgbjContract.functions.usersBalance(userAddr).call()
+            washCount = sgbjContract.functions.usersWashCount(userAddr).call()
+
+            totalDeposit = sgbjContract.functions.balanceSum().call()
+            totalWashCount = sgbjContract.functions.washCountSum().call()
+
+            depositWinProb = 0
+            washCountWinProb = 0
+
+            if deposit != 0:
+                depositWinProb = float(deposit) / float(totalDeposit) * float(100)
+            if washCount != 0:
+                washCountWinProb = float(washCount) / float(totalWashCount) * float(100)
+
+            response = {"depositWinProb": depositWinProb, "washCountWinProb": washCountWinProb, "result" : "success"}
             return jsonify(response)
         except:
             response = {"result" : "fail"}
@@ -217,57 +280,30 @@ def blockchain():
 
 if __name__ == "__main__":
 
-    # test codes
     # function call & wait for the tx to be mined (with enough gas)
     # https://web3py.readthedocs.io/en/latest/contracts.html#web3.contract.ContractFunction.call
 
     # transact(): send transaction
     # call(): get contract state = not send transaction (ex. call getter function)
 
-    # start mining
-    print("start")
-    fullnode.geth.miner.start(1)
-
-    # addWashCount()
-    # tx_hash = sgbjContract.functions.addWashCount(10).transact({'gas':GAS})
-    # tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
-    # print(tx_receipt)
-
-    # # addDeposit()
-    # tx_hash = sgbjContract.functions.addDeposit(100).transact({'gas':GAS})
-    # tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
-    # print(tx_receipt)
-
-    # # get the users washCount (getter function call)
-    # getWashCount = sgbjContract.functions.usersWashCount(fullnode.eth.coinbase).call()
-    # print(getWashCount)
-
-    # # selectWinner()
-    # tx_hash = sgbjContract.functions.selectWinner().transact({'gas':GAS})
-    # tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
-    # print(tx_receipt)
-
-    # # get current round number (getter function call)
-    # roundNumber = sgbjContract.functions.roundNumber().call()
-    # print("current round:", roundNumber)
-
-    # # get the last rounds result
-    # depositWinner = sgbjContract.functions.depositWinners(roundNumber-1).call()
-    # washCountWinner = sgbjContract.functions.washCountWinners(roundNumber-1).call()
-    # winningPrizeAmount = sgbjContract.functions.winningsAmount(roundNumber-1).call()
-    # print("deposit winner:", depositWinner, "/ washCount winner:", washCountWinner, "/ winnings:", winningPrizeAmount, "ETH")
-
-    # sys.exit()
-
-
-
-    # run backend server
+    # check connection with Ethereum node
     try:
         print("current blocknumber:", fullnode.eth.blockNumber)
         print("coinbase:", fullnode.eth.coinbase)
         fullnode.geth.miner.start(1)
+
+        # temp code for demo
+        # insert random user
+        userAddr = generateRandomAddress()
+        depositAmount = random.randint(1,300)
+        washCountAmount = random.randint(1,3)
+        tx_hash = sgbjContract.functions.addDeposit(depositAmount, userAddr).transact({'gas':GAS})
+        tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
+        tx_hash = sgbjContract.functions.addWashCount(washCountAmount, userAddr).transact({'gas':GAS})
+        tx_receipt = fullnode.eth.waitForTransactionReceipt(tx_hash)
     except:
         print("ERROR: cannot connect to Ethereum node. Start ethereum node first")
         sys.exit()
     
+    # run backend server
     app.run(host=HOST, port=PORT)
