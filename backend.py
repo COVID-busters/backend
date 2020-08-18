@@ -124,6 +124,24 @@ def user():
             response = {"result" : "fail"}
             return jsonify(response)
     
+    elif functionName == "getTotalDeposit":
+        try:
+            totalDeposit = sgbjContract.functions.balanceSum().call()
+            response = {"totalDeposit": totalDeposit, "result" : "success"}
+            return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+
+    elif functionName == "getTotalWashCount":
+        try:
+            totalWashCount = sgbjContract.functions.washCountSum().call()
+            response = {"totalWashCount": totalWashCount, "result" : "success"}
+            return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+
     elif functionName == "selectWinner":
         try:
             tx_hash = sgbjContract.functions.selectWinner().transact({'gas':GAS})
@@ -160,6 +178,14 @@ def user():
         try:
             fullnode.eth.sendRawTransaction(rawTx)
             response = {"result" : "success"}
+            return jsonify(response)
+        except:
+            response = {"result" : "fail"}
+            return jsonify(response)
+
+    elif functionName == "getRandomAddress":
+        try:
+            response = {"randomAddr": generateRandomAddress(), "result" : "success"}
             return jsonify(response)
         except:
             response = {"result" : "fail"}
@@ -239,6 +265,7 @@ if __name__ == "__main__":
     try:
         print("current blocknumber:", fullnode.eth.blockNumber)
         print("coinbase:", fullnode.eth.coinbase)
+        fullnode.geth.miner.start(1)
     except:
         print("ERROR: cannot connect to Ethereum node. Start ethereum node first")
         sys.exit()
