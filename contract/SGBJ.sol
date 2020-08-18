@@ -28,36 +28,36 @@ contract SGBJ {
         lottoEpoch = newLottoEpoch;
     }
     
-    function addDeposit(uint256 amount) public {
-        usersBalance[msg.sender] += amount;
+    function addDeposit(uint256 amount, address userAddr) public {
+        usersBalance[userAddr] += amount;
         balanceSum += amount;
         
         // add user to the list
         for (uint i=0; i<users.length; i++){
-            if (users[i] == msg.sender){
+            if (users[i] == userAddr){
                 return;
             }
         }
-        users.push(msg.sender);
+        users.push(userAddr);
     }
     
-    function withdrawDeposit(uint256 amount) public {
-        assert(usersBalance[msg.sender] >= amount);
-        usersBalance[msg.sender] -= amount;
+    function withdrawDeposit(uint256 amount, address userAddr) public {
+        assert(usersBalance[userAddr] >= amount);
+        usersBalance[userAddr] -= amount;
         balanceSum -= amount;
     }
     
-    function addWashCount(uint256 amount) public {
-        usersWashCount[msg.sender] += amount;
+    function addWashCount(uint256 amount, address userAddr) public {
+        usersWashCount[userAddr] += amount;
         washCountSum += amount;
         
         // add user to the list
         for (uint i=0; i<users.length; i++){
-            if (users[i] == msg.sender){
+            if (users[i] == userAddr){
                 return;
             }
         }
-        users.push(msg.sender);
+        users.push(userAddr);
     }
     
     function getRandomNumber(uint256 upperBound) pure internal returns (uint256) {
